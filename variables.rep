@@ -1,0 +1,62 @@
+// Per a la classe variables hem decidit utilitzar un AVL, ja que aquest tipus de diccionari compleix amb les característiques exigides per la classe.
+struct node
+{
+    // Clau associada al node
+    string _k;
+    // Valor associat al node
+    expressio _v;
+    // Punter al fill esquerre del node
+    node *_esq;
+    // Punter al fill dret del node
+    node *_dret;
+    // Altura del node en l'arbre
+    int _altura;
+    // Constructor del node
+    node(const string &k, const expressio &v, node *esq = nullptr, node *dret = nullptr) throw(error);
+};
+// Node que apunta a l'arrel del AVL
+node *_arrel;
+
+// Pre: El punter "n" apunta a un node en un arbre binari.
+// Post : L'arbre binari complet apuntat per "n" ha estat alliberat de la memòria, incloent-hi tots els seus nodes fills i subarbre dret i esquerre.
+static void esborra(node *n);
+
+// Pre: El punter "n" apunta a un node en un arbre binari.
+// Post: Es retorna un punter a un arbre binari completament copiat, incloent - hi tots els seus nodes fills i subarbre dret i esquerre, que és una còpia exacta del arbre binari apuntat per "n".El node original no es modifica.
+static node *copia(node *n);
+
+// Pre: El punter "n" apunta a un node en un arbre binari.
+// Post: La funció altura(node *n) retorna l 'altura de l' arbre binari apuntat per "n".Si el punter "n" és null, retorna 0.
+static int altura(node *n);
+
+// Pre: El punter "n" apunta a un node en un arbre binari.
+// Post: La funció factor_equilibri(node *n) retorna el factor d 'equilibri de l' arbre binari apuntat per "n".El factor d 'equilibri es calcula com la diferència entre l' altura de l 'arbre esquerre i l' altura de l'arbre dret. Si el punter "n" és null, retorna 0.
+static int factor_equilibri(node *n);
+
+// Pre: El punter "y" apunta a un node en un arbre binari on el fill esquerre de "y" no es null.
+// Post: La funció rotacio_dreta(node *y) realitza una rotació a la dreta en l 'arbre binari apuntat per "y" i retorna un punter a la nova arrel de l' arbre resultat de la rotació.La rotació consisteix en canviar l'arrel de "y" per el seu fill esquerre "x", i el fill dret de "x" es converteix en el fill esquerre de "y". Les altures dels nodes implicats en la rotació són actualitzats.
+static node *rotacio_dreta(node *y);
+
+// Pre: El punter "x" apunta a un node en un arbre binari on el fill dret de "x" no es null.
+// Post: La funció rotacio_esquerra(node *x) realitza una rotació a l 'esquerra en l' arbre binari apuntat per "x" i retorna un punter a la nova arrel de l 'arbre resultat de la rotació. La rotació consisteix en canviar l' arrel de "x" per el seu fill dret "y", i el fill esquerre de "y" es converteix en el fill dret de "x".Les altures dels nodes implicats en la rotació són actualitzats.
+static node *rotacio_esquerra(node *x);
+
+// Pre: El punter "n" apunta a un node en un arbre binari AVL. La clau "k" i el valor "v" són strings.
+// Post: La funció assign(node *n, const string &k, const expressio &v) afegeix o modifica un valor associat a una clau en l 'arbre binari apuntat per "n". Si la clau no existeix, es crea un nou node amb la clau i el valor especificats. Si la clau ja existeix, el valor associat es sobreescriu. La funció també realitza les operacions necessàries per mantenir l' equilibri de l'arbre AVL.
+static node *assign(node *n, const string &k, const expressio &v);
+
+// Pre: El punter "n" apunta a un node en un arbre binari AVL. La clau "k" es un string.
+// Post: La funció unassign(node *n, const string &k) elimina el node amb clau "k" de l'arbre binari apuntat per "n". Si la clau no existeix, la funció retorna null. La funció també realitza les operacions necessàries per mantenir l'equilibri de l'arbre AVL.
+static node *unassign(node *n, const string &k);
+
+// Pre: El punter "n" apunta a un node en un arbre binari.
+// Post: La funció minValueNode(node *n) retorna un punter a un node que té el valor lexicogràficament menor entre els nodes de l'arbre binari apuntat per "n". El node original no es modifica.
+static node *minValueNode(node *n);
+
+// Pre: El punter "n" apunta a un node en un arbre binari. La clau "lv" es un string.
+// Post: La funció cerca(node *n, const string &lv) retorna un punter a un node amb la clau "lv" en l'arbre binari apuntat per "n", si existeix. Si la clau no existeix, retorna nullptr.
+static node *cerca(node *n, const string &lv);
+
+// Pre: El punter "n" apunta a un node en un arbre binari. La llista "l" es una llista de strings.
+// Post: La funció rdump(node *n, list<string> &l) recorre en ordre inordre l'arbre binari apuntat per "n" i afegeix les claus dels nodes en la llista "l"
+static void rdump(node *n, list<string> &l);

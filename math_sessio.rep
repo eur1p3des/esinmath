@@ -1,0 +1,16 @@
+// Objecte de la classe variables per a emmagatzemar variables i els seus valors per aquesta sessió
+variables variable;
+// L'expressió actual que s'està avaluant o assignant a una variable
+expressio exp;
+// Flag per fer el seguiment si la sessió ha finalitzat
+bool ended;
+
+// Analitza una llista de tokens per determinar si es tracta d'una comanda vàlida o no.
+// PRE: "l" és una llista de tokens vàlida.
+// POST: llença l'error "La sintaxi de la comanda és incorrecta" si la comanda "l" no té una sintaxi correcta.
+static void teError(const list<token> &l) throw(error);
+
+// Comprova si el segon token d'una llista de tokens és d'un determinat tipus.
+// PRE: "lin" és una llista de tokens vàlida i "c" és un codi de token vàlid.
+// POST: retorna "true" si el segon token de la llista "lin" té el codi "c", en cas contrari, retorna false.
+static bool segonToken(const list<token> &lin, const token::codi &c);

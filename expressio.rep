@@ -1,0 +1,143 @@
+// Per a realitzar la classe expressió, vam arribar a la conclusió que la millor representació per a fer l'arbre d'expressió era utilitzar l'arbre binari, ja que en el "pitjor" dels casos, cada node només haurà de tindre dos fills.
+struct node
+{
+    // Informació associada al node
+    token info;
+
+    // Punter al fill esquerre del node
+    node *f_esq;
+
+    // Punter al fill dret del node
+    node *f_dret;
+
+    // Constructor per defecte del node
+    node(const token &info = token(token::NULLTOK), node *f_esq = nullptr, node *f_dret = nullptr);
+};
+
+// Variable global de punter a l'arrel de l'arbre binari
+node *_arrel;
+
+// Pre: El punter "m" apunta a un node en un arbre binari.
+// Post: Es retorna un punter a un arbre binari completament copiat, incloent - hi tots els seus nodes fills i subarbre dret i esquerre, que és una còpia exacta del arbre binari apuntat per "m".El node original no es modifica.
+static node *copia_nodes(node *m);
+
+// Pre: El punter "m" apunta a un node en un arbre binari.
+// Post : L'arbre binari complet apuntat per "m" ha estat alliberat de la memòria, incloent-hi tots els seus nodes fills i subarbre dret i esquerre.
+static void esborra_nodes(node *m);
+
+// Pre: Els tokens "a" i "b" són tokens vàlids.
+// Post: La funció preferenciaMajor(const token &a, const token &b) compara la prioritat de les operacions associades als tokens "a" i "b" i retorna true si la prioritat de "a" es major que la de "b", i false en cas contrari. Els parentesis tenen prioritat màxima, seguits per les funcions i l'operació d'exponenciació, seguits per les operacions aritmètiques i finalment les operacions de comparació. Si "a" i "b" són iguals, la funció retorna false.
+static bool preferenciaMajor(const token &a, const token &b);
+
+// Pre: Els tokens "a" i "b" són tokens vàlids.
+// Post: La funció preferenciaMenor(const token &a, const token &b) compara la prioritat de les operacions associades als tokens "a" i "b" i retorna true si la prioritat de "a" es menor que la de "b", i false en cas contrari. Els parentesis tenen prioritat màxima, seguits per les funcions i l'operació d'exponenciació, seguits per les operacions aritmètiques i finalment les operacions de comparació. Si "a" i "b" són iguals, la funció retorna false.
+static bool preferenciaMenor(const token &a, const token &b);
+
+// Pre: El token "a" és un token vàlid.
+// Post: La funció associativitatEsquerraDreta(const token &a) retorna true si l'operació associada al token "a" té associativitat esquerra-a-dreta, false en cas contrari. Les operacions d'exponenciació i unàries tenen associativitat dreta-a-esquerra, mentre que les operacions binàries i les funcions tenen associativitat esquerra-a-dreta.
+static bool associativitatEsquerraDreta(const token &a);
+
+// Pre: El token "a" és un token vàlid.
+// Post: La funció isOperand(const token &a) retorna true si el token "a" és un operand (constant o variable), false en cas contrari. Els tipus de token considerats operands son: CT_ENTERA, CT_RACIONAL, CT_REAL, CT_E, VARIABLE, VAR_PERCENTATGE.
+static bool isOperand(const token &a);
+
+// Pre: El token "a" és un token vàlid.
+// Post: La funció isOperator(const token &a) retorna true si el token "a" és un operator (unari, binari o funció), false en cas contrari.
+static bool isOperator(const token &a);
+
+// Pre: El token "a" és un token vàlid.
+// Post: La funció isUnary(const token &a) retorna true si el token "a" és un operador unari, false en cas contrari. Els tipus de token considerats operadors unaris son: CANVI_DE_SIGNE, SIGNE_POSITIU.
+static bool isUnary(const token &a);
+
+// Pre: El token "a" és un token vàlid.
+// Post: La funció isBinary(const token &a) retorna true si el token "a" és un operador binari, false en cas contrari. Els tipus de token considerats operadors binaris son: SUMA, RESTA, EXPONENCIACIO, MULTIPLICACIO, DIVISIO.
+static bool isBinary(const token &a);
+
+// Pre: El token "a" és un token vàlid.
+// Post: La funció isFunction(const token &a) retorna true si el token "a" és una funció predefinida, false en cas contrari. Els tipus de token considerats funció son: SQRT, EXP, LOG, EVALF.
+static bool isFunction(const token &a);
+
+// Pre: El token "a" és un token vàlid.
+// Post: La funció isParenthesis(const token &a) retorna true si el token "a" és un parèntesis, false en cas contrari.
+static bool isParenthesis(const token &a);
+
+// Pre: Els tokens "a" i "b" són tokens vàlids.
+// Post: La funció provocaError(const token &a, const token &b) retorna true si la combinació dels dos tokens "a" i "b" provoca un error sintàctic en l'expressió, false en cas contrari. Aquestes combinacions de tokens són considerades com a errors: dos operands seguits, un operand seguit d'un operador unari, un operand seguit d'una funció, dos operadors binaris seguits, un parèntesi obert seguit d'un operador binari, dos parèntesis seguits o un operador unari seguit d'un operador binari.
+static bool provocaError(const token &a, const token &b);
+
+// Pre: Els punters 'a' i 'b' apunten a dos arbres binaris que es volen comparar.
+// Post: Retorna cert si els dos arbres són iguals, fals altrament.La comparació es realitza recursivament comparant els valors dels nodes i els seus fills esquerre i dret.
+static bool iguals(node *a, node *b);
+
+// Pre: El punter 'n' apunta a un arbre binari, i l és una llista buida
+// Post: l conté totes les variables de l'arbre 'n' sense repeticions.
+static void recorre(node *n, list<string> &l);
+
+// Pre: Els punters 'n' i 'e' apunten a dos arbres binaris, v conté l'identificador d'una variable.
+// Post: S'han substituït totes les aparicions de v de l'arbre n per l'arbre e
+static void apply_substitution(node *n, const string &v, node *e);
+
+// Intenta simplificar una expressió que conté una suma i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifySuma(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté una resta i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifyResta(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté canvi de signe i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifyCanviSigne(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté una multiplicació i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifyMultiplicacio(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté una divisió i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifyDivisio(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté una Exponenciació i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifyExponenciacio(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté una radicació i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifySqrt(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté una exp (ct_e^x) i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifyExp(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté un logaritme natural i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifyLog(node *n, bool &trobat) throw(error);
+
+// Intenta simplificar una expressió que conté la funció evalf i retorna si ho ha pogut fer.
+// Pre: 'n' és un punter a node vàlid.
+// Post: si a 'n' se li ha pogut aplicar una regla de simplificació, s'efectua i retorna true, en cas contrari, no fa res i retorna false.
+static node *simplifyEvalf(node *n, bool &trobat) throw(error);
+
+// Aplica un pas de simplificació a l'expressió
+// Pre: 'n' és un punter a node vàlid
+// Post: s'ha aplicat un pas de simplificació
+static void simplifyParts(node *n, bool &trobat) throw(error);
+
+// Simplifica l'expressió fins a obtenir una expressió normal (expressió que ja no es pot simplificar més)
+// Pre: 'n' és un punter a node vàlid
+// Post: s'ha simplificat l'expressió a la corresponent expressió normal.
+static void simplifyTot(node *n, bool &trobat) throw(error);
+
+// Recorre un arbre binari emmagatzemant en una llista l'arbre d'expressió.
+// Pre: 'n' és un punter a node vàlid, 'tokens' és una llista de tokens buida.
+// Post: 'tokens' conté la representació de l'expressió en notació infixa amb els parèntesis corresponents.
+static void listoftokens(node *n, list<token> &tokens);
