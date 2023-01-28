@@ -2,8 +2,6 @@
 #include <algorithm>
 using namespace std;
 
-/* Constructora. Crea una nova sessió buida i emmagatzema a la variable
-    especial % l'expressió buida. */
 math_sessio::math_sessio() throw(error)
 {
     ended = false;
@@ -11,7 +9,6 @@ math_sessio::math_sessio() throw(error)
     variable.assign("%", exp);
 }
 
-// Constructora per còpia, assignació i destructora.
 math_sessio::math_sessio(const math_sessio &es) throw(error) : variable(es.variable), exp(es.exp), ended(es.ended) {}
 math_sessio &math_sessio::operator=(const math_sessio &es) throw(error)
 {
@@ -24,37 +21,6 @@ math_sessio::~math_sessio() throw(error)
 {
 }
 
-/* Aquest mètode rep una llista de tokens, lin, lèxicament correcta.
-    Primerament analitza parcialment lin per verificar si la comanda és
-    correcta. Si és correcta executa la comanda que conté lin.
-    Les comandes són:
-    * avaluació d'una expressió E.
-    * assignació v :=  E. S'avalua E i s'assigna el resultat a la variable
-    de nom v.
-    * desassignació d'una variable v: unassign v.
-    * final de sessió: byebye
-
-    En l'anàlisi de la comanda lin es produeix un error de comanda
-    incorrecta en els següents casos:
-    * si conté el token DESASSIGNACIO i,
-        * o bé la comanda no té dos tokens
-        * o bé aquest no és el primer token
-        * o bé el segon token no és una VARIABLE.
-    * si conté el token BYEBYE i aquest no és el primer i únic token
-    de la comanda.
-    * si conté el token ASSIGNACIO i,
-        * o bé la comanda té longitud menor que dos
-        * o bé no és el segon token
-        * o bé el primer token no és un token VARIABLE.
-
-    Les comandes que involucren avaluació (avaluar i assignar) retornen
-    l'expressió avaluada en forma de llista de tokens en lout. La comanda
-    unassign retorna la llista que conté com únic token la variable
-    desassignada. Finalment la comanda byebye retorna la llista buida.
-    Es produeix un error en una assignació, si després l'avaluació de
-    l'expressió es comprova que la variable assignada forma part del conjunt
-    de variables de l'expressió avaluada, tal i com s'explica a
-    l'apartat "Procés d'avaluació". */
 void math_sessio::execute(const list<token> &lin, list<token> &lout) throw(error)
 {
     teError(lin);
@@ -113,7 +79,6 @@ void math_sessio::execute(const list<token> &lin, list<token> &lout) throw(error
     }
 }
 
-// COST: O(n), perquè utilitza un iterador per recórrer la llista de tokens "lin" i comprova cada token.
 void math_sessio::teError(const list<token> &l) throw(error)
 {
     for (list<token>::const_iterator it = l.begin(); it != l.end(); ++it)
@@ -157,64 +122,60 @@ void math_sessio::teError(const list<token> &l) throw(error)
     }
 }
 
-// COST: O(1), ja que només es fa una única iteració sobre una llista.
 bool math_sessio::segonToken(const list<token> &l, const token::codi &c)
 {
     auto it = std::next(l.begin());
     return it != l.end() and (*it).tipus() == c;
 }
-// Retorna cert si i només si la sessió ha finalitzat.
+
 bool math_sessio::end_of_session() const throw()
 {
     return ended;
 }
 
-/* Retorna en forma de llista d'strings, en un ordre qualsevol, la llista de
-    variables juntament amb el seu valor assignat. Cada string de la llista
-    té el format id = e, on id és el nom d'una variable i e és l'expressió
-    (com string) assignada a id. Convertim una expressió e en el seu string
-    corresponent invocant al mètode tostring del mòdul esinmath_io. */
 void math_sessio::dump(list<string> &l) const throw(error)
 {
+    // Crea una llista per emmagatzemar els noms de les variables
     list<string> nom_variables;
+    // Afegeix tots els noms de les variables a la llista
     variable.dump(nom_variables);
+    // Itera a través de cada nom de variable en la llista
     for (const string &nom : nom_variables)
     {
+        // Obté l'expressió associada a la variable
         expressio ex = variable.valor(nom);
+        // Crea una llista per emmagatzemar els tokens de l'expressió
         list<token> lot;
+        // Afegeix els tokens de l'expressió a la llista
         ex.list_of_tokens(lot);
+        // Converteix la llista de tokens a una cadena de caràcters
         string ex_str = math_io::tostring(lot);
+        // Si el nom de la variable no és buit, afegeix el nom i l'expressió a la llista final
         if (nom != "")
             l.push_back(nom + " = " + ex_str);
     }
 }
 
-/* Donada una expressió e, aplica a les seves variables totes les
-    substitucions definides per elles. L'expressió resultant només contindrà
-    variables per les quals no hi ha substitució definida (no estan en el
-    conjunt). Aquest procés s'explica en detall a l'apartat "Procés
-    d'avaluació". S'assumeix que no existeix circularitat infinita entre les
-    substitucions de les variables que formen part de l'expressió e. */
 void math_sessio::apply_all_substitutions(expressio &e) const throw(error)
 {
-    // Create a list to store the variables that still need to have substitutions applied.
-    std::list<string> vars_to_substitute;
-    // Add all the variables in the expression to the list.
-    e.vars(vars_to_substitute);
+    // Crea una llista per emmagatzemar les variables que encara necessiten aplicar substitucions.
+    list<string> vars_a_substituir;
+    // Afegeix totes les variables en l'expressió a la llista.
+    e.vars(vars_a_substituir);
 
-    // While there are still variables in the list, apply substitutions.
-    while (!vars_to_substitute.empty())
+    // Mentre encara hi hagi variables en la llista, aplica substitucions.
+    while (!vars_a_substituir.empty())
     {
-        // Get the next variable in the list.
-        string v = vars_to_substitute.front();
-        vars_to_substitute.pop_front();
+        // Obté la següent variable de la llista.
+        string v = vars_a_substituir.front();
+        vars_a_substituir.pop_front();
 
-        // Check if the variable has a substitution defined.
+        // Comprova si la variable té una substitució definida.
         if (variable.valor(v) != expressio())
         {
-            // If it does, substitute the variable and add the resulting variables to the list.
+            // Si ho fa, substitueix la variable i afegeix les variables resultant a la llista.
             e.apply_substitution(v, variable.valor(v));
-            e.vars(vars_to_substitute);
+            e.vars(vars_a_substituir);
         }
     }
 }

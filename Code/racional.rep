@@ -1,0 +1,13 @@
+// En aquest cas el meu company i jo hem arribat a la conclusió que la forma més simple de representar un racional és utilitzar dos enters, un pel numerador (nume) i l'altre pel denominador (den)
+int nume;
+int den;
+
+// Funció estàtica per calcular el màxim comú divisor (mcd) de dos nombres enters.
+// Pre: Els valors de 'a' i 'b' són enters vàlids.
+// Post: La funció retorna el màxim comú divisor (mcd) entre 'a' i 'b' utilitzant l'algorisme d'Euclides.
+static int mcd(int a, int b);
+
+// Funció estàtica per calcular el mínim comú múltiple (mcm) de dos nombres enters
+// Pre: Els valors de 'a' i 'b' són enters vàlids.
+// Post: La funció retorna el mínim comú múltiple (mcm) entre 'a' i 'b' utilitzant el mcd calculat per la funció mcd() anterior.
+static int mcm(int a, int b);

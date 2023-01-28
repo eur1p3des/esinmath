@@ -103,5 +103,6 @@ int main()
     // Free buffer that was allocated by readline
     free(input);
   }
+  clear_history();
   return 0;
 }

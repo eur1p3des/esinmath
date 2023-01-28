@@ -47,14 +47,13 @@ int variables::factor_equilibri(node *n)
         return 0;
     return altura(n->_esq) - altura(n->_dret);
 }
-// Construeix un conjunt de variables buit.
+
 // Aquesta funció té cost O(1)
 variables::variables() throw(error)
 {
     _arrel = NULL;
 }
 
-// Constructora per còpia, assignació i destructora.
 // Aquesta funció té cost O(n) on n és el nombre de nodes
 variables::variables(const variables &v) throw(error)
 {
@@ -76,9 +75,6 @@ variables::~variables() throw(error)
     _arrel = nullptr;
 }
 
-/* Afegeix al conjunt de variables la variable de nom v juntament amb el seu
-   valor-expressió e. Si la variable v ja existia llavors li assigna el nou
-   valor-expressió. */
 // Aquesta operació té un cost algorísmic d'O(1), ja que només implica canviar alguns apuntadors i actualitzar algunes altures de nodes.
 variables::node *variables::rotacio_dreta(node *y)
 {
@@ -153,8 +149,6 @@ variables::node *variables::assign(node *n, const string &k, const expressio &v)
     return n;
 }
 
-/* Elimina del conjunt de variables el parell amb la variable de nom v. Si
-   la variable no existeix llavors no fa res. */
 // Aquesta funció té cost O(log n), on n és el nombre de nodes de l'arbre, ja que cercal el node a eliminar i un cop trobat elmina el node i si cal fa les rotacions per a mantindre l'arbre equilibrat, fet que fa que el cost sigui O(log n)
 void variables::unassign(const string &v) throw()
 {
@@ -238,8 +232,7 @@ variables::node *variables::minValueNode(node *n)
         actual = actual->_esq;
     return actual;
 }
-/* Consulta el valor-expressió de la variable v. Si la variable no està en
-   el conjunt de variables retorna l'expressió buida. */
+
 // Aquesta funció  té un cost algorístic d'O(log n), ja que cerca el node amb la clau cercada en l'arbre AVL mitjançant una cerca binària. Això fa que el cost de l'operació sigui logarítmic en el nombre de nodes de l'arbre.
 expressio variables::valor(const string &lv) const throw(error)
 {
@@ -266,8 +259,6 @@ variables::node *variables::cerca(node *n, const string &lv)
         return cerca(n->_dret, lv); // Si la variable és més gran, cerca a l'arbre dret
 }
 
-/* Retorna en l totes les claus del conjunt de variables, en un ordre
-   qualsevol. Si no hi ha cap clau retorna la llista buida.*/
 // Aquesta funció té cost algorístic d'O(n), ja que cada node de l'arbre es visita només un cop i es fa una única operació per node. Això fa que el cost de l'operació sigui lineal en el nombre de nodes de l'arbre.
 void variables::dump(list<string> &l) const throw(error)
 {

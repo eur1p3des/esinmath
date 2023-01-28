@@ -1,0 +1,34 @@
+// Estructura que representa un codi
+codi co;
+
+// Per a la classe token, hem arribat a la conclusió que el millor és utilitzar la classe union per a emmagatzemar les dades dels tokens, ja que només es pot seleccionar una de les possibles variables compreses dins de l'unió.
+// Union que conté diferents tipus de dades
+union param
+{
+    // Cadena de caràcters
+    string *s = nullptr;
+
+    // Nombre enter
+    int enter;
+
+    // Racional
+    racional rn;
+
+    // Nombre real
+    double real;
+
+    // Constructor per defecte de la union
+    param()
+    {
+    }
+    // Destructor de la union
+    ~param()
+    {
+    }
+} data;
+
+// Funció estàtica per comprovar si un token és un operador
+// Pre: L'objecte 'a' és una instància vàlida de la classe 'token'.
+// Post: La funció retorna 'true' si el token passat com a paràmetre és un operador aritmètic, i 'false' si no ho és. Els operadors es determinen mitjançant un "switch" que compara el valor de 'a.tipus()' amb diferents constants (SUMA, RESTA, MULTIPLICACIO, DIVISIO, EXPONENCIACIO, CANVI_DE_SIGNE i SIGNE_POSITIU) i retorna 'true' si coincideix amb alguna d'elles. Si no coincideix amb cap d'elles, retorna 'false'.
+// Aquesta funció té cost O(1)
+static bool isOperator(const token &a);

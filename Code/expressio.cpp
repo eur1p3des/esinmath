@@ -585,7 +585,7 @@ expressio::node *expressio::simplifySuma(node *n, bool &trobat) throw(error)
     }
     else if (n->f_esq->info.tipus() == token::MULTIPLICACIO and n->f_dret->info.tipus() == token::MULTIPLICACIO)
     {
-        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret))
+        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret)) // E1*E + E2*E
         {
             node *aux = n->f_dret;
             n->info = token(token::MULTIPLICACIO);
@@ -597,7 +597,7 @@ expressio::node *expressio::simplifySuma(node *n, bool &trobat) throw(error)
             trobat = true;
             return n;
         }
-        else if (iguals(n->f_esq->f_dret, n->f_dret->f_esq))
+        else if (iguals(n->f_esq->f_dret, n->f_dret->f_esq)) // E1*E + E*E2
         {
             node *aux = n->f_dret;
             n->info = token(token::MULTIPLICACIO);
@@ -609,7 +609,7 @@ expressio::node *expressio::simplifySuma(node *n, bool &trobat) throw(error)
             trobat = true;
             return n;
         }
-        else if (iguals(n->f_esq->f_esq, n->f_dret->f_dret))
+        else if (iguals(n->f_esq->f_esq, n->f_dret->f_dret)) // E*E1 + E2*E
         {
             node *aux = n->f_dret;
             n->info = token(token::MULTIPLICACIO);
@@ -622,7 +622,7 @@ expressio::node *expressio::simplifySuma(node *n, bool &trobat) throw(error)
             trobat = true;
             return n;
         }
-        else if (iguals(n->f_esq->f_esq, n->f_dret->f_esq))
+        else if (iguals(n->f_esq->f_esq, n->f_dret->f_esq)) // E*E1 + E*E2
         {
             node *aux = n->f_dret;
             n->info = token(token::MULTIPLICACIO);
@@ -636,20 +636,17 @@ expressio::node *expressio::simplifySuma(node *n, bool &trobat) throw(error)
             return n;
         }
     }
-    else if (n->f_esq->info.tipus() == token::DIVISIO and n->f_dret->info.tipus() == token::DIVISIO)
+    else if (n->f_esq->info.tipus() == token::DIVISIO and n->f_dret->info.tipus() == token::DIVISIO and iguals(n->f_esq->f_dret, n->f_dret->f_dret)) // E1/E + E2/E
     {
-        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret))
-        {
-            node *aux = n->f_dret;
-            n->info = token(token::DIVISIO);
-            n->f_esq->info = token(token::SUMA);
-            delete n->f_esq->f_dret;
-            n->f_esq->f_dret = n->f_dret->f_esq;
-            n->f_dret = n->f_dret->f_dret;
-            delete aux;
-            trobat = true;
-            return n;
-        }
+        node *aux = n->f_dret;
+        n->info = token(token::DIVISIO);
+        n->f_esq->info = token(token::SUMA);
+        delete n->f_esq->f_dret;
+        n->f_esq->f_dret = n->f_dret->f_esq;
+        n->f_dret = n->f_dret->f_dret;
+        delete aux;
+        trobat = true;
+        return n;
     }
     return n;
 }
@@ -752,7 +749,7 @@ expressio::node *expressio::simplifyResta(node *n, bool &trobat) throw(error)
     }
     else if (n->f_esq->info.tipus() == token::MULTIPLICACIO and n->f_dret->info.tipus() == token::MULTIPLICACIO)
     {
-        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret))
+        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret)) // E1*E - E2*E
         {
             node *aux = n->f_dret;
             n->info = token(token::MULTIPLICACIO);
@@ -764,7 +761,7 @@ expressio::node *expressio::simplifyResta(node *n, bool &trobat) throw(error)
             trobat = true;
             return n;
         }
-        else if (iguals(n->f_esq->f_dret, n->f_dret->f_esq))
+        else if (iguals(n->f_esq->f_dret, n->f_dret->f_esq)) // E1*E - E*E2
         {
             node *aux = n->f_dret;
             n->info = token(token::MULTIPLICACIO);
@@ -776,7 +773,7 @@ expressio::node *expressio::simplifyResta(node *n, bool &trobat) throw(error)
             trobat = true;
             return n;
         }
-        else if (iguals(n->f_esq->f_esq, n->f_dret->f_dret))
+        else if (iguals(n->f_esq->f_esq, n->f_dret->f_dret)) // E*E1 - E2*E
         {
             node *aux = n->f_dret;
             n->info = token(token::MULTIPLICACIO);
@@ -789,7 +786,7 @@ expressio::node *expressio::simplifyResta(node *n, bool &trobat) throw(error)
             trobat = true;
             return n;
         }
-        else if (iguals(n->f_esq->f_esq, n->f_dret->f_esq))
+        else if (iguals(n->f_esq->f_esq, n->f_dret->f_esq)) // E*E1 + E*E2
         {
             node *aux = n->f_dret;
             n->info = token(token::MULTIPLICACIO);
@@ -803,20 +800,17 @@ expressio::node *expressio::simplifyResta(node *n, bool &trobat) throw(error)
             return n;
         }
     }
-    else if (n->f_esq->info.tipus() == token::DIVISIO and n->f_dret->info.tipus() == token::DIVISIO)
+    else if (n->f_esq->info.tipus() == token::DIVISIO and n->f_dret->info.tipus() == token::DIVISIO) // E1/E - E2/E
     {
-        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret))
-        {
-            node *aux = n->f_dret;
-            n->info = token(token::DIVISIO);
-            n->f_esq->info = token(token::RESTA);
-            delete n->f_esq->f_dret;
-            n->f_esq->f_dret = n->f_dret->f_esq;
-            n->f_dret = n->f_dret->f_dret;
-            delete aux;
-            trobat = true;
-            return n;
-        }
+        node *aux = n->f_dret;
+        n->info = token(token::DIVISIO);
+        n->f_esq->info = token(token::RESTA);
+        delete n->f_esq->f_dret;
+        n->f_esq->f_dret = n->f_dret->f_esq;
+        n->f_dret = n->f_dret->f_dret;
+        delete aux;
+        trobat = true;
+        return n;
     }
     return n;
 }
@@ -1009,36 +1003,30 @@ expressio::node *expressio::simplifyMultiplicacio(node *n, bool &trobat) throw(e
         trobat = true;
         return n;
     }
-    else if (n->f_dret->info.tipus() == token::DIVISIO)
+    else if (n->f_dret->info.tipus() == token::DIVISIO and (n->f_dret->f_esq->info.tipus() == token::CT_ENTERA and n->f_dret->f_esq->info.valor_enter() == 1)) // E ∗ (1/E′) → E/E'
     {
-        if (n->f_dret->f_esq->info.tipus() == token::CT_ENTERA and n->f_dret->f_esq->info.valor_enter() == 1)
-        {
-            node *aux = n->f_dret, *auxe = n->f_dret->f_esq;
-            n->info = token(token::DIVISIO);
-            n->f_dret = aux->f_dret;
-            delete auxe;
-            delete aux;
-            trobat = true;
-            return n;
-        }
+        node *aux = n->f_dret, *auxe = n->f_dret->f_esq;
+        n->info = token(token::DIVISIO);
+        n->f_dret = aux->f_dret;
+        delete auxe;
+        delete aux;
+        trobat = true;
+        return n;
     }
-    else if (n->f_esq->info.tipus() == token::DIVISIO)
+    else if (n->f_esq->info.tipus() == token::DIVISIO and (n->f_esq->f_esq->info.tipus() == token::CT_ENTERA and n->f_esq->f_esq->info.valor_enter() == 1)) // (1/E′) ∗ E → E/E′
     {
-        if (n->f_esq->f_esq->info.tipus() == token::CT_ENTERA and n->f_esq->f_esq->info.valor_enter() == 1)
-        {
-            node *ae = n->f_esq, *aee = n->f_esq->f_esq;
-            n->info = token(token::DIVISIO);
-            n->f_esq = n->f_dret;
-            n->f_dret = ae->f_dret;
-            delete aee;
-            delete ae;
-            trobat = true;
-            return n;
-        }
+        node *ae = n->f_esq, *aee = n->f_esq->f_esq;
+        n->info = token(token::DIVISIO);
+        n->f_esq = n->f_dret;
+        n->f_dret = ae->f_dret;
+        delete aee;
+        delete ae;
+        trobat = true;
+        return n;
     }
     else if (n->f_esq->info.tipus() == token::EXPONENCIACIO and n->f_dret->info.tipus() == token::EXPONENCIACIO)
     {
-        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret))
+        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret)) // E1ˆE ∗ E2ˆE → (E1 ∗ E2)ˆE
         {
             node *aux = n->f_dret;
             n->info = token(token::EXPONENCIACIO);
@@ -1050,7 +1038,7 @@ expressio::node *expressio::simplifyMultiplicacio(node *n, bool &trobat) throw(e
             trobat = true;
             return n;
         }
-        else if (iguals(n->f_esq->f_esq, n->f_dret->f_esq))
+        else if (iguals(n->f_esq->f_esq, n->f_dret->f_esq)) // EˆE1 ∗ EˆE2 → Eˆ(E1 + E2)
         {
             node *aux = n->f_esq;
             n->info = token(token::EXPONENCIACIO);
@@ -1063,7 +1051,7 @@ expressio::node *expressio::simplifyMultiplicacio(node *n, bool &trobat) throw(e
             return n;
         }
     }
-    else if (n->f_esq->info.tipus() == token::EXP and n->f_dret->info.tipus() == token::EXP)
+    else if (n->f_esq->info.tipus() == token::EXP and n->f_dret->info.tipus() == token::EXP) // exp(E) ∗ exp(E′) → exp(E + E′)
     {
         node *aux = n->f_esq;
         n->info = token(token::EXP);
@@ -1196,22 +1184,19 @@ expressio::node *expressio::simplifyDivisio(node *n, bool &trobat) throw(error)
         trobat = true;
         return n;
     }
-    else if (n->f_dret->info.tipus() == token::DIVISIO)
+    else if (n->f_dret->info.tipus() == token::DIVISIO and ((n->f_dret->f_esq->info.tipus() == token::CT_ENTERA and n->f_dret->f_esq->info.valor_enter() == 1))) // E/(1/E′) → E ∗ E′
     {
-        if (n->f_dret->f_esq->info.tipus() == token::CT_ENTERA and n->f_dret->f_esq->info.valor_enter() == 1)
-        {
-            node *aux = n->f_dret, *auxe = n->f_dret->f_esq;
-            n->info = token(token::MULTIPLICACIO);
-            n->f_dret = aux->f_dret;
-            delete auxe;
-            delete aux;
-            trobat = true;
-            return n;
-        }
+        node *aux = n->f_dret, *auxe = n->f_dret->f_esq;
+        n->info = token(token::MULTIPLICACIO);
+        n->f_dret = aux->f_dret;
+        delete auxe;
+        delete aux;
+        trobat = true;
+        return n;
     }
     else if (n->f_esq->info.tipus() == token::EXPONENCIACIO and n->f_dret->info.tipus() == token::EXPONENCIACIO)
     {
-        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret))
+        if (iguals(n->f_esq->f_dret, n->f_dret->f_dret)) // E1ˆE/E2ˆE → (E1/E2)ˆE
         {
             node *aux = n->f_dret;
             n->info = token(token::EXPONENCIACIO);
@@ -1223,7 +1208,7 @@ expressio::node *expressio::simplifyDivisio(node *n, bool &trobat) throw(error)
             trobat = true;
             return n;
         }
-        else if (iguals(n->f_esq->f_esq, n->f_dret->f_esq))
+        else if (iguals(n->f_esq->f_esq, n->f_dret->f_esq)) // EˆE1/EˆE2 → Eˆ(E1 − E2)
         {
             node *aux = n->f_esq;
             n->info = token(token::EXPONENCIACIO);
@@ -1389,13 +1374,24 @@ expressio::node *expressio::simplifyExponenciacio(node *n, bool &trobat) throw(e
         trobat = true;
         return n;
     }
-    else if (n->f_esq->info.tipus() == token::EXPONENCIACIO)
+    else if (n->f_esq->info.tipus() == token::EXPONENCIACIO) //(E1ˆE2)ˆE3 → E1ˆ(E2 ∗ E3)
     {
         node *aux = n->f_esq;
         n->f_esq = aux->f_esq;
         n->f_dret = new node(token(token::MULTIPLICACIO), aux->f_dret, n->f_dret);
         delete aux;
         trobat = true;
+        return n;
+    }
+    else if (n->f_esq->info.tipus() == token::EXP) //(exp(E))ˆE′ → exp(E ∗ E′)
+    {
+        n->info = token(token::EXP);
+        n->f_esq->f_esq = n->f_dret;
+        n->f_dret = new node(token(token::MULTIPLICACIO));
+        n->f_dret->f_dret = n->f_esq->f_esq;
+        n->f_dret->f_esq = n->f_esq->f_dret;
+        delete n->f_esq;
+        n->f_esq = nullptr;
         return n;
     }
     return n;
