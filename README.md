@@ -57,4 +57,5 @@ Les principals funcions que realitza ESINMATH són:
 
 ## Nota:
 > Una característica singular d'ESINMATH és que una vegada desassignem el valor a la variable x l'avaluació de la variable q té com a resultat l'expressió que se li va assignar originalment.
+
 > Abans de compilar el projecte, és important instalar la biblioteca LIBESIN als vostres dispositius, seguint la guia que hi ha al fitxer .zip.
